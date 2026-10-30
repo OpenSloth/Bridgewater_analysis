@@ -19,41 +19,42 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
-  header{padding:28px clamp(16px,4vw,48px) 8px}
+  header{padding:16px clamp(14px,3vw,36px) 4px}
   h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:clamp(24px,3.2vw,34px);margin:0 0 4px}
   .sub{color:var(--muted);font-size:14px}
   .sub a{color:inherit}
   nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
-      padding:8px clamp(16px,4vw,48px);display:flex;gap:6px;overflow-x:auto}
+      padding:6px clamp(14px,3vw,36px);display:flex;gap:6px;overflow-x:auto}
   nav a{padding:7px 14px;border-radius:999px;color:var(--muted);text-decoration:none;white-space:nowrap;font-size:14px}
   nav a.on{background:var(--fg);color:var(--bg)}
-  main{padding:20px clamp(16px,4vw,48px) 60px;max-width:1400px}
+  main{padding:14px clamp(14px,3vw,36px) 40px;max-width:1600px}
   section{display:none} section.on{display:block}
-  .lede{max-width:820px;font-size:16px;margin:4px 0 20px}
-  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr))}
-  .kpis{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:18px}
-  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-  .kpi .v{font-family:Georgia,serif;font-size:30px;line-height:1.1}
-  .kpi .l{font-size:13px;color:var(--muted);margin-top:4px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column}
-  .card h3{margin:0 0 4px;font-size:15px;font-weight:600}
-  .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted);margin-bottom:10px}
+  .lede{max-width:900px;font-size:15px;margin:2px 0 12px}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr))}
+  .kpis{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:12px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .kpi .v{font-family:Georgia,serif;font-size:24px;line-height:1.1}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column}
+  .card h3{margin:0 0 3px;font-size:14px;font-weight:600;line-height:1.3}
+  .meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:11px;color:var(--muted);margin-bottom:6px}
   .badge{background:var(--chip);border-radius:6px;padding:1px 7px}
   .badge.approx{color:var(--amber)} .badge.exact{color:var(--green)}
   .meta a{color:var(--muted)}
-  .chart{position:relative;height:280px}
-  .take{margin-top:12px;font-size:14px;border-top:1px dashed var(--line);padding-top:10px}
+  .chart{position:relative;height:200px}
+  .wide .chart{height:220px}
+  .take{margin-top:8px;font-size:13px;line-height:1.45;border-top:1px dashed var(--line);padding-top:7px}
   .take b{font-weight:600}
   .wide{grid-column:1/-1}
-  .whatif{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:18px}
+  .whatif{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:12px}
   .whatif input[type=range]{width:100%;accent-color:var(--accent)}
   .scale{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
-  .verdict{margin-top:12px;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-  .verdict div{border-radius:10px;padding:10px 12px;background:var(--chip);font-size:14px}
+  .verdict{margin-top:8px;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .verdict div{border-radius:8px;padding:7px 10px;background:var(--chip);font-size:13px}
   .verdict .h{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
   .pill-good{border-left:4px solid var(--green)} .pill-bad{border-left:4px solid var(--red)} .pill-mid{border-left:4px solid var(--amber)}
   .scen{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
-  .scen div{background:var(--chip);border-radius:10px;padding:10px 12px;font-size:14px}
+  .scen div{background:var(--chip);border-radius:8px;padding:8px 10px;font-size:13px}
   .scen .good{border-top:3px solid var(--green)} .scen .mid{border-top:3px solid var(--accent)}
   .scen .warn{border-top:3px solid var(--amber)} .scen .bad{border-top:3px solid var(--red)}
   table{border-collapse:collapse;width:100%;font-size:13px}
@@ -98,7 +99,7 @@
     <div class="card" data-chart="pricedInProd"></div>
     <div class="card" data-chart="requiredSpend"></div>
   </div>
-  <h3 style="margin:26px 0 10px">Four paths forward for AI</h3>
+  <h3 style="margin:16px 0 8px">Four paths forward for AI</h3>
   <div class="scen" id="scen"></div>
   <p class="note" id="hinge"></p>
 </section>
@@ -213,10 +214,10 @@ const charts = [];
 const baseOpts = (unit, extra={}) => Object.assign({
   responsive:true, maintainAspectRatio:false, animation:false,
   interaction:{mode:'index',intersect:false},
-  plugins:{legend:{labels:{color:css('--fg'),boxWidth:12,font:{size:12}}},
-    tooltip:{callbacks:{label:c=>`${c.dataset.label?c.dataset.label+': ':''}${c.parsed.y ?? c.parsed.x}${unit==='x'?'x':unit&&unit.startsWith('%')?'%':unit==='pp'?' pp':''}`}}},
-  scales:{x:{ticks:{color:css('--muted')},grid:{color:css('--line')}},
-          y:{ticks:{color:css('--muted'),callback:v=>v+(unit==='x'?'x':unit&&unit.startsWith('%')?'%':'')},grid:{color:css('--line')}}}
+  plugins:{legend:{labels:{color:css('--fg'),boxWidth:10,padding:8,font:{size:11}}},
+    tooltip:{callbacks:{title:i=>i[0]?[].concat(i[0].label).join(' '):'',label:c=>`${c.dataset.label?c.dataset.label+': ':''}${c.parsed.y ?? c.parsed.x}${unit==='x'?'x':unit&&unit.startsWith('%')?'%':unit==='pp'?' pp':''}`}}},
+  scales:{x:{ticks:{color:css('--muted'),font:{size:10},maxRotation:0,autoSkipPadding:6},grid:{color:css('--line')}},
+          y:{ticks:{color:css('--muted'),font:{size:10},callback:v=>v+(unit==='x'?'x':unit&&unit.startsWith('%')?'%':'')},grid:{color:css('--line')}}}
 }, extra);
 
 function lineXY(key, extraSets=[]){
@@ -237,6 +238,7 @@ function multiLine(key, opts={}){
     return s;});
   return {type:'line',data:{labels:c.years,datasets:sets},options:baseOpts(c.unit)};
 }
+const wrap=(t,n=16)=>{const w=String(t).split(' '),out=[];let l='';w.forEach(x=>{if((l+' '+x).trim().length>n&&l){out.push(l);l=x}else l=(l+' '+x).trim()});out.push(l);return out.length>1?out:out[0];};
 function bars(key, opts={}){
   const c=C[key]; const P=PAL();
   let sets;
@@ -246,13 +248,15 @@ function bars(key, opts={}){
   if(opts.horizontal){ const t=o.scales.x; o.scales.x=o.scales.y; o.scales.y=t; o.scales.y.ticks={color:css('--muted')}; }
   o.plugins.legend.display=!!c.series;
   if(opts.horizontal) o.plugins.tooltip.callbacks.label=ctx=>`${ctx.dataset.label?ctx.dataset.label+': ':''}${ctx.parsed.x}${c.unit==='x'?'x':'%'}`;
-  return {type:'bar',data:{labels:c.labels,datasets:sets},options:o};
+  if(!opts.horizontal){ o.scales.x.ticks.autoSkip=false; }
+  return {type:'bar',data:{labels:c.labels.map(l=>opts.horizontal?l:wrap(l)),datasets:sets},options:o};
 }
 
 const BUILD = {
   pricedInProd: ()=>{ const c=C.pricedIn, P=PAL();
     const o=baseOpts('%'); o.plugins.legend.display=false;
-    return {type:'bar',data:{labels:['Discounted in AI stocks','Implied by macro markets','Economist consensus'],
+    o.scales.x.ticks.autoSkip=false;
+    return {type:'bar',data:{labels:['Discounted in AI stocks','Implied by macro markets','Economist consensus'].map(l=>wrap(l)),
       datasets:[{data:[c.series['Discounted in AI complex'][0],c.series['Implied in broader macro markets'][0],c.series['Consensus estimate'][0]],backgroundColor:[P[1],P[0],P[3]],borderRadius:4}]},options:o}; },
   requiredSpend: ()=>bars('requiredSpend'),
   jobCuts: ()=>bars('jobCuts',{colorFn:(v,i,P)=>i===0?P[1]:P[0]}),
@@ -274,7 +278,7 @@ const BUILD = {
   govDebt: ()=>multiLine('govDebt'),
   fiscalSustainability: ()=>bars('fiscalSustainability'),
   fiscalGap: ()=>{ const c=C.fiscalSustainability; const gap=c.series['Projected net issuance'].map((v,i)=>+(v-c.series['Ability to absorb'][i]).toFixed(1));
-    const P=PAL(); const o=baseOpts('% GDP'); o.plugins.legend.display=false;
+    const P=PAL(); const o=baseOpts('% GDP'); o.plugins.legend.display=false; o.scales.x.ticks.autoSkip=false;
     return {type:'bar',data:{labels:c.labels,datasets:[{label:'Issuance minus absorption',data:gap,backgroundColor:gap.map(v=>v>0?P[1]:P[2]),borderRadius:4}]},options:o}; },
   usYield: ()=>lineXY('usYield',[hline('Level needed (~150bp lower)',C.usYield.needed,2005,2026,PAL()[1])]),
   breakeven: ()=>lineXY('breakeven',[hline('2% target',C.breakeven.target,2005,2026,PAL()[2])]),
