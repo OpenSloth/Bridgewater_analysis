@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bridgewater Q3 2026 Outlook — Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="data/charts.js"></script>
+<style>
+  :root{
+    --bg:#f7f6f2; --panel:#ffffff; --fg:#1d1d1b; --muted:#6b6a65; --line:#e3e1da;
+    --accent:#1f4fd1; --red:#c2352b; --green:#2e8540; --amber:#b7791f; --chip:#efede6;
+    --s1:#1f4fd1; --s2:#c2352b; --s3:#2e8540; --s4:#b7791f; --s5:#7b4bb7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#161614; --panel:#1f1f1c; --fg:#ecebe6; --muted:#a3a29b; --line:#34332f; --chip:#2a2a26;
+      --accent:#7d9cf5; --red:#ef7a6f; --green:#6cc47f; --amber:#e3b05a;
+      --s1:#7d9cf5; --s2:#ef7a6f; --s3:#6cc47f; --s4:#e3b05a; --s5:#b796e8; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif}
+  header{padding:28px clamp(16px,4vw,48px) 8px}
+  h1{font-family:Georgia,"Times New Roman",serif;font-weight:500;font-size:clamp(24px,3.2vw,34px);margin:0 0 4px}
+  .sub{color:var(--muted);font-size:14px}
+  .sub a{color:inherit}
+  nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+      padding:8px clamp(16px,4vw,48px);display:flex;gap:6px;overflow-x:auto}
+  nav a{padding:7px 14px;border-radius:999px;color:var(--muted);text-decoration:none;white-space:nowrap;font-size:14px}
+  nav a.on{background:var(--fg);color:var(--bg)}
+  main{padding:20px clamp(16px,4vw,48px) 60px;max-width:1400px}
+  section{display:none} section.on{display:block}
+  .lede{max-width:820px;font-size:16px;margin:4px 0 20px}
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr))}
+  .kpis{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:18px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .kpi .v{font-family:Georgia,serif;font-size:30px;line-height:1.1}
+  .kpi .l{font-size:13px;color:var(--muted);margin-top:4px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column}
+  .card h3{margin:0 0 4px;font-size:15px;font-weight:600}
+  .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted);margin-bottom:10px}
+  .badge{background:var(--chip);border-radius:6px;padding:1px 7px}
+  .badge.approx{color:var(--amber)} .badge.exact{color:var(--green)}
+  .meta a{color:var(--muted)}
+  .chart{position:relative;height:280px}
+  .take{margin-top:12px;font-size:14px;border-top:1px dashed var(--line);padding-top:10px}
+  .take b{font-weight:600}
+  .wide{grid-column:1/-1}
+  .whatif{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:18px}
+  .whatif input[type=range]{width:100%;accent-color:var(--accent)}
+  .scale{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+  .verdict{margin-top:12px;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .verdict div{border-radius:10px;padding:10px 12px;background:var(--chip);font-size:14px}
+  .verdict .h{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .pill-good{border-left:4px solid var(--green)} .pill-bad{border-left:4px solid var(--red)} .pill-mid{border-left:4px solid var(--amber)}
+  .scen{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .scen div{background:var(--chip);border-radius:10px;padding:10px 12px;font-size:14px}
+  .scen .good{border-top:3px solid var(--green)} .scen .mid{border-top:3px solid var(--accent)}
+  .scen .warn{border-top:3px solid var(--amber)} .scen .bad{border-top:3px solid var(--red)}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600}
+  button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:8px;padding:5px 10px;cursor:pointer}
+  .note{font-size:13px;color:var(--muted)}
+  ol.chap{padding-left:18px;margin:6px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>Bridgewater Q3 2026 Outlook</h1>
+  <div class="sub" id="sub"></div>
+</header>
+<nav id="nav">
+  <a href="#overview">Overview</a>
+  <a href="#ai">AI boom</a>
+  <a href="#concentration">Concentration &amp; politics</a>
+  <a href="#mercantilism">Mercantilism</a>
+  <a href="#fiscal">Fiscal limits</a>
+  <a href="#pricing">Market pricing</a>
+  <a href="#data">Data</a>
+</nav>
+<main>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <p class="lede">Jensen's argument in one line: <b>AI and modern mercantilism feed each other</b>, concentrating power and speeding up change, and <b>different markets are pricing very different futures</b>. AI equities price a productivity boom; bonds, currencies and inflation markets price business as usual. Both can't be right.</p>
+  <div class="kpis" id="kpis"></div>
+
+  <div class="whatif">
+    <h3 style="margin:0 0 4px">What do <em>you</em> think US productivity growth will be through 2028?</h3>
+    <div class="note" style="margin-bottom:10px">Drag to see which side of Jensen's "pricing gap" your view says is wrong.</div>
+    <input type="range" id="prod" min="0.5" max="5" step="0.1" value="2.6">
+    <div class="scale"><span>0.5%</span><span>Consensus 1.8%</span><span>Macro 2.0%</span><span>AI stocks 3.4%</span><span>5%</span></div>
+    <div style="margin-top:8px;font-size:15px">Your view: <b id="prodv"></b></div>
+    <div class="verdict" id="verdict"></div>
+  </div>
+
+  <div class="grid">
+    <div class="card" data-chart="pricedInProd"></div>
+    <div class="card" data-chart="requiredSpend"></div>
+  </div>
+  <h3 style="margin:26px 0 10px">Four paths forward for AI</h3>
+  <div class="scen" id="scen"></div>
+  <p class="note" id="hinge"></p>
+</section>
+
+<section id="ai">
+  <p class="lede">AI has crossed human-expert level in maths, science, cybersecurity and coding. The market has noticed: a cheap build-out in early 2025 is now priced for an exponential boom. The question is who pays for it.</p>
+  <div class="grid">
+    <div class="card" data-chart="aiBenchmarks"></div>
+    <div class="card" data-chart="peRatio"></div>
+    <div class="card" data-chart="epsIndex"></div>
+    <div class="card" data-chart="requiredSpend"></div>
+    <div class="card" data-chart="jobCuts"></div>
+    <div class="card" data-chart="valueGrowth"></div>
+  </div>
+</section>
+
+<section id="concentration">
+  <p class="lede">Corporate power, wealth and compute are concentrating. That is fuelling a populist backlash in Europe and a collapse in how allies view the US. Meanwhile, defence, infrastructure and AI spending are pushing real rates up.</p>
+  <div class="grid">
+    <div class="card" data-chart="largestCompany"></div>
+    <div class="card" data-chart="wealthTop"></div>
+    <div class="card" data-chart="populism"></div>
+    <div class="card" data-chart="usFavorability"></div>
+    <div class="card wide" data-chart="realYield"></div>
+  </div>
+</section>
+
+<section id="mercantilism">
+  <p class="lede">China has made itself self-sufficient while making the world depend on it. US tariffs diverted Chinese exports to Europe and Japan, so "mercantilism begets mercantilism" and the middle powers are next.</p>
+  <div class="grid">
+    <div class="card" data-chart="chinaImports"></div>
+    <div class="card" data-chart="chokepoints"></div>
+    <div class="card" data-chart="chinaExportGrowth"></div>
+    <div class="card" data-chart="exportShare"></div>
+  </div>
+</section>
+
+<section id="fiscal">
+  <p class="lede">The fiscal limit isn't a debt/GDP number. It's the point where inflation, a weak currency or bubbles bite, and that depends on productivity, domestic savings and foreign demand for your assets.</p>
+  <div class="grid">
+    <div class="card wide" data-chart="govDebt"></div>
+    <div class="card" data-chart="fiscalSustainability"></div>
+    <div class="card" data-chart="fiscalGap"></div>
+    <div class="card" data-chart="usYield"></div>
+    <div class="card" data-chart="breakeven"></div>
+    <div class="card" data-chart="usProductivity"></div>
+  </div>
+</section>
+
+<section id="pricing">
+  <p class="lede">$30T of AI market cap implies one future; the rest of the market implies another. The gap is the trade.</p>
+  <div class="grid">
+    <div class="card wide" data-chart="pricedIn"></div>
+    <div class="card" data-chart="termPremium"></div>
+    <div class="card" data-chart="breakeven"></div>
+  </div>
+</section>
+
+<section id="data">
+  <p class="lede">Every number on this dashboard, where it came from, and how precise it is.</p>
+  <div class="card">
+    <p class="note" style="margin-top:0"><b style="color:var(--green)">exact</b> = printed on the slide or said in the talk. <b style="color:var(--amber)">approx</b> = read by eye off the chart; fine for shape and rough level, not for precise work. Forward-looking points ("required", "needed", "discounted", projections) are Bridgewater's own model estimates.</p>
+    <div style="overflow-x:auto"><table id="dtable"><thead><tr><th>Chart</th><th>Slide</th><th>Time</th><th>Accuracy</th><th></th></tr></thead><tbody></tbody></table></div>
+    <h3 style="margin-top:20px">Chapters</h3>
+    <ol class="chap" id="chap"></ol>
+    <pre id="csv" style="display:none;white-space:pre-wrap;font-size:12px;background:var(--chip);padding:10px;border-radius:8px;max-height:300px;overflow:auto"></pre>
+  </div>
+</section>
+</main>
+
+<script>
+(function(){
+const D = window.BW_DATA, C = D.charts;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const PAL = () => ['--s1','--s2','--s3','--s4','--s5'].map(css);
+const ytUrl = ts => { const [m,s]=ts.split(':').map(Number); return D.meta.video + '&t=' + (m*60+s) + 's'; };
+
+document.getElementById('sub').innerHTML =
+  'Managing CIO Greg Jensen · recorded ' + D.meta.recorded + ' · ' + D.meta.length +
+  ' · <a href="' + D.meta.video + '" target="_blank" rel="noopener">watch on YouTube</a>';
+
+// ---- analysis text for each chart ----
+const TAKE = {
+  pricedInProd: "<b>The core mismatch.</b> AI equities only make sense if productivity grows ~3.4%/yr, nearly double what bond and FX markets imply (~2.0%) and what economists expect (~1.8%). One of these markets is wrong.",
+  requiredSpend: "<b>The ROI hurdle.</b> To justify today's prices, AI inference spend has to grow ~5x in two years, ending up larger than <i>all</i> US software sales today. The money has to come from wages, profits, or new growth.",
+  jobCuts: "<b>Option 1: take it from wages.</b> Funding breakeven AI adoption by cutting labour would mean job losses (~7%) close to the Great Recession and more than double the dot-com bust. That would be politically explosive.",
+  valueGrowth: "<b>Option 2: grow into it.</b> The alternative is ~4% value growth, matching the best periods in post-war US history. Not impossible, but it assumes a best-ever outcome.",
+  aiBenchmarks: "<b>Threshold crossed.</b> In all four domains the latest models score above the human-expert line. Maths and coding jumped the most in a year. Caveat: these mix very different benchmarks, so treat them as directional.",
+  peRatio: "<b>The cheap phase is over.</b> The multiple on 2028 earnings went from ~3–4x to ~15x. At that level, over half the equity value depends on earnings more than 10 years out, so even if AI wins, the easy return has been made.",
+  epsIndex: "<b>Consensus already expects ~5x earnings by 2028</b> (+173% then +96%). Any shortfall against this path hits prices directly.",
+  largestCompany: "<b>Nvidia is the biggest company ever relative to the world economy</b>, about 2x the peaks of Standard Oil and AT&T, both of which were eventually broken up.",
+  wealthTop: "<b>Wealth concentration is back at Gilded-Age levels</b> and still rising. Historically this preceded political backlash, which is exactly the next chart.",
+  populism: "<b>Populist parties now take ~30% of the European vote</b>, up from ~10% in the late 1990s, with the far-right share growing fastest. The trend predates AI (China joining the WTO), but AI accelerates it.",
+  usFavorability: "<b>Allies' view of the US has collapsed</b>: every country is down 30+ points since 2023. This gives voters cover to back leaders who stand up to the US, and it is pushing defence budgets up ~29%.",
+  realYield: "<b>Real yields are back to mid-2000s levels.</b> Government spending (defence, infrastructure) plus AI capex compete for capital, squeezing the rate-sensitive, non-AI economy. The red-arc framing on the slide overdramatises it somewhat: 3.4% is high for the 2010s but normal for the early 2000s.",
+  chinaImports: "<b>China needs the world less</b>: imports halved from ~27% to ~14% of GDP, and manufactured imports fell to ~6%.",
+  chokepoints: "<b>…while the world needs China more.</b> In chemicals and machinery, the share of products where China supplies over half of world exports jumped sharply since 2017. These are deliberate chokepoints.",
+  chinaExportGrowth: "<b>Tariffs redirected, not reduced, Chinese exports.</b> Shipments to the US are down ~14%, but to Europe they are up ~19% and to Japan ~10%. The squeeze moves to the middle powers.",
+  exportShare: "<b>China keeps taking market share from Europe and Japan</b> in strategic exports. This is the pressure that pushes Europe toward its own mercantilism and toward populists.",
+  govDebt: "<b>Debt is rising almost everywhere, but levels alone don't set the limit.</b> Japan got to ~230% before its currency cracked because of its high domestic savings. Dashed lines are Bridgewater projections.",
+  fiscalSustainability: "<b>Brazil is the clear outlier</b>: issuance is ~3x what its market can absorb. The <b>US is slightly over</b> its limit, the UK is fine <i>if</i> it sticks to its fiscal rules, and Canada and Australia have room.",
+  fiscalGap: "<b>Same data, as a gap.</b> Positive = issuing more than the market can absorb. Small for the US in % terms, but the US is the anchor of global bond markets, so a small overshoot matters a lot.",
+  usYield: "<b>Yields rose despite Treasury buybacks.</b> Getting ~150bp lower (dotted line) would let the US grow out of its debt at current policy. But with inflation above target, forcing rates down risks credibility.",
+  breakeven: "<b>Inflation expectations haven't moved</b> and sit near target, as if nothing disruptive is coming. That is the 'priced for more of the same' point.",
+  usProductivity: "<b>The other exit is productivity.</b> At ~2%, the US is well short of the ~3% it needs to grow out of its debt. That makes the AI productivity bet a fiscal bet too.",
+  pricedIn: "<b>Market by market:</b> AI stocks imply high productivity, high growth, heavy corporate issuance (~9% of GDP) and huge current-account surpluses for chip exporters Korea and Taiwan (~28% of GDP). Broader markets price much less of all of it.",
+  termPremium: "<b>Bonds aren't pricing a fight for capital.</b> The term premium has risen but is still below its long-run average, even though AI capex and government borrowing will both need financing."
+};
+
+// ---- chart builders ----
+const charts = [];
+const baseOpts = (unit, extra={}) => Object.assign({
+  responsive:true, maintainAspectRatio:false, animation:false,
+  interaction:{mode:'index',intersect:false},
+  plugins:{legend:{labels:{color:css('--fg'),boxWidth:12,font:{size:12}}},
+    tooltip:{callbacks:{label:c=>`${c.dataset.label?c.dataset.label+': ':''}${c.parsed.y ?? c.parsed.x}${unit==='x'?'x':unit&&unit.startsWith('%')?'%':unit==='pp'?' pp':''}`}}},
+  scales:{x:{ticks:{color:css('--muted')},grid:{color:css('--line')}},
+          y:{ticks:{color:css('--muted'),callback:v=>v+(unit==='x'?'x':unit&&unit.startsWith('%')?'%':'')},grid:{color:css('--line')}}}
+}, extra);
+
+function lineXY(key, extraSets=[]){
+  const c=C[key]; const P=PAL();
+  const pts=(c.points||[]).map(p=>Array.isArray(p)?{x:p[0],y:p[1]}:{x:p.x,y:p.y});
+  const sets=[{label:c.title.split(',')[0],data:pts,borderColor:P[0],backgroundColor:P[0],pointRadius:2,tension:0}].concat(extraSets);
+  const o=baseOpts(c.unit); o.scales.x.type='linear'; o.scales.x.ticks.callback=v=>v; o.scales.x.min=pts[0].x; o.scales.x.max=pts[pts.length-1].x; o.plugins.legend.display=sets.length>1;
+  o.plugins.tooltip.callbacks.title=i=>i[0]?String(i[0].parsed.x):'';
+  return {type:'line',data:{datasets:sets},options:o};
+}
+function hline(label, y, x0, x1, color){ return {label, data:[{x:x0,y},{x:x1,y}], borderColor:color, borderDash:[6,4], pointRadius:0, borderWidth:1.5}; }
+
+function multiLine(key, opts={}){
+  const c=C[key]; const P=PAL();
+  const sets=Object.entries(c.series).map(([n,v],i)=>{
+    const s={label:n,data:v,borderColor:P[i%5],backgroundColor:P[i%5],pointRadius:2,tension:0,spanGaps:true};
+    if(c.projectedFrom){ const k=c.years.indexOf(c.projectedFrom); s.segment={borderDash:ctx=>ctx.p0DataIndex>=k?[5,4]:undefined}; }
+    return s;});
+  return {type:'line',data:{labels:c.years,datasets:sets},options:baseOpts(c.unit)};
+}
+function bars(key, opts={}){
+  const c=C[key]; const P=PAL();
+  let sets;
+  if(c.series) sets=Object.entries(c.series).map(([n,v],i)=>({label:n,data:v,backgroundColor:P[i%5],borderRadius:4}));
+  else sets=[{label:c.title,data:c.values,backgroundColor:c.values.map((v,i)=>opts.colorFn?opts.colorFn(v,i,P):P[0]),borderRadius:4}];
+  const o=baseOpts(c.unit,{indexAxis:opts.horizontal?'y':'x'});
+  if(opts.horizontal){ const t=o.scales.x; o.scales.x=o.scales.y; o.scales.y=t; o.scales.y.ticks={color:css('--muted')}; }
+  o.plugins.legend.display=!!c.series;
+  if(opts.horizontal) o.plugins.tooltip.callbacks.label=ctx=>`${ctx.dataset.label?ctx.dataset.label+': ':''}${ctx.parsed.x}${c.unit==='x'?'x':'%'}`;
+  return {type:'bar',data:{labels:c.labels,datasets:sets},options:o};
+}
+
+const BUILD = {
+  pricedInProd: ()=>{ const c=C.pricedIn, P=PAL();
+    const o=baseOpts('%'); o.plugins.legend.display=false;
+    return {type:'bar',data:{labels:['Discounted in AI stocks','Implied by macro markets','Economist consensus'],
+      datasets:[{data:[c.series['Discounted in AI complex'][0],c.series['Implied in broader macro markets'][0],c.series['Consensus estimate'][0]],backgroundColor:[P[1],P[0],P[3]],borderRadius:4}]},options:o}; },
+  requiredSpend: ()=>bars('requiredSpend'),
+  jobCuts: ()=>bars('jobCuts',{colorFn:(v,i,P)=>i===0?P[1]:P[0]}),
+  valueGrowth: ()=>bars('valueGrowth',{colorFn:(v,i,P)=>i===0?P[1]:P[0]}),
+  aiBenchmarks: ()=>{ const cfg=bars('aiBenchmarks'); cfg.options.scales.y.max=100; return cfg; },
+  peRatio: ()=>{ const c=C.peRatio,P=PAL(); const o=baseOpts('x'); o.plugins.legend.display=false;
+    return {type:'line',data:{labels:c.labels,datasets:[{label:'P/E',data:c.values,borderColor:P[0],backgroundColor:P[0],pointRadius:2,tension:0}]},options:o}; },
+  epsIndex: ()=>{ const c=C.epsIndex,P=PAL(); const o=baseOpts('x'); o.plugins.legend.display=false;
+    return {type:'line',data:{labels:c.labels,datasets:[{label:'EPS index',data:c.values,borderColor:P[1],backgroundColor:P[1],pointRadius:3,segment:{borderDash:ctx=>ctx.p0DataIndex>=2?[5,4]:undefined}}]},options:o}; },
+  largestCompany: ()=>{ const cfg=lineXY('largestCompany'); cfg.options.plugins.tooltip.callbacks.afterLabel=ctx=>C.largestCompany.points[ctx.dataIndex].label||''; return cfg; },
+  wealthTop: ()=>lineXY('wealthTop'),
+  populism: ()=>multiLine('populism'),
+  usFavorability: ()=>multiLine('usFavorability'),
+  realYield: ()=>lineXY('realYield',[hline('Zero',0,2000,2026,css('--muted'))]),
+  chinaImports: ()=>multiLine('chinaImports'),
+  chokepoints: ()=>bars('chokepoints',{horizontal:true}),
+  chinaExportGrowth: ()=>bars('chinaExportGrowth',{colorFn:(v,i,P)=>v<0?P[1]:P[2]}),
+  exportShare: ()=>multiLine('exportShare'),
+  govDebt: ()=>multiLine('govDebt'),
+  fiscalSustainability: ()=>bars('fiscalSustainability'),
+  fiscalGap: ()=>{ const c=C.fiscalSustainability; const gap=c.series['Projected net issuance'].map((v,i)=>+(v-c.series['Ability to absorb'][i]).toFixed(1));
+    const P=PAL(); const o=baseOpts('% GDP'); o.plugins.legend.display=false;
+    return {type:'bar',data:{labels:c.labels,datasets:[{label:'Issuance minus absorption',data:gap,backgroundColor:gap.map(v=>v>0?P[1]:P[2]),borderRadius:4}]},options:o}; },
+  usYield: ()=>lineXY('usYield',[hline('Level needed (~150bp lower)',C.usYield.needed,2005,2026,PAL()[1])]),
+  breakeven: ()=>lineXY('breakeven',[hline('2% target',C.breakeven.target,2005,2026,PAL()[2])]),
+  usProductivity: ()=>lineXY('usProductivity',[hline('Needed to make debts sustainable',C.usProductivity.needed,2005,2025,PAL()[1])]),
+  pricedIn: ()=>bars('pricedIn'),
+  termPremium: ()=>lineXY('termPremium',[hline('Long-term average',C.termPremium.longTermAvg,1970,2026,PAL()[1]),hline('Zero',0,1970,2026,css('--muted'))])
+};
+const SRC = { pricedInProd:'pricedIn', fiscalGap:'fiscalSustainability' };
+const TITLE = { pricedInProd:'US productivity growth priced in, by market', fiscalGap:'Issuance gap: projected issuance minus ability to absorb (% GDP)' };
+
+function accClass(a){ a=String(a); return a.startsWith('exact')&&!a.includes('approx')?'exact':'approx'; }
+
+function render(){
+  charts.splice(0).forEach(c=>c.destroy());
+  document.querySelectorAll('section.on .card[data-chart]').forEach(card=>{
+    const key=card.dataset.chart, src=C[SRC[key]||key];
+    const acc=Array.isArray(src.accuracy)?'mixed (see Data tab)':src.accuracy;
+    card.innerHTML=`<h3>${TITLE[key]||src.title}</h3>
+      <div class="meta"><span class="badge ${accClass(acc)}">${acc}</span>
+      <span>Slide: “${src.slide}”</span> · <a href="${ytUrl(src.ts)}" target="_blank" rel="noopener">${src.ts} ▶</a></div>
+      <div class="chart"><canvas></canvas></div>
+      ${src.note?`<div class="note" style="margin-top:6px">${src.note}</div>`:''}
+      <div class="take">${TAKE[key]||''}</div>`;
+    if(!window.Chart){ card.querySelector('.chart').innerHTML='<p class="note">Chart library failed to load.</p>'; return; }
+    charts.push(new Chart(card.querySelector('canvas'),BUILD[key]()));
+  });
+}
+
+// ---- KPIs ----
+const k=[
+  ['3.4% vs 2.0%','Productivity priced into AI stocks vs macro markets'],
+  ['~15x','P/E on 2028 earnings, data-centre supply chain (was ~3–4x)'],
+  ['104%','AI spend needed by 2028, as % of today’s US software sales'],
+  ['−7%','Job cuts needed to fund it from wages (Great Recession: −7.6%)'],
+  ['3.4%','US 30-yr real yield, highest since the mid-2000s'],
+  ['~3x','Brazil’s debt issuance vs what its market can absorb']
+];
+document.getElementById('kpis').innerHTML=k.map(([v,l])=>`<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('');
+
+// ---- scenarios ----
+document.getElementById('scen').innerHTML=D.scenarios.map(s=>`<div class="${s.tone}"><b>${s.name}</b><br>${s.text}</div>`).join('');
+document.getElementById('hinge').textContent='Hinge points Bridgewater is monitoring: '+D.hingePoints.join(' · ');
+
+// ---- what-if ----
+const AI=C.pricedIn.series['Discounted in AI complex'][0], MAC=C.pricedIn.series['Implied in broader macro markets'][0], NEED=C.usProductivity.needed;
+function whatif(){
+  const p=+document.getElementById('prod').value; document.getElementById('prodv').textContent=p.toFixed(1)+'% a year';
+  const ai = p>=AI ? ['pill-good','AI stocks','Priced about right or too low. Your view justifies the ~15x multiple.']
+          : p>MAC ? ['pill-mid','AI stocks','Overpriced vs your view: they need '+AI+'%, you see '+p.toFixed(1)+'%. Downside if the gap closes.']
+          : ['pill-bad','AI stocks','Badly overpriced vs your view. This is the "bubble popped" path.'];
+  const mac = p>=AI ? ['pill-bad','Bonds, Asian FX, breakevens','Mispriced: no fight for capital, no export-boom FX pressure, no inflation risk priced in.']
+          : p>MAC+0.3 ? ['pill-mid','Bonds, Asian FX, breakevens','Somewhat under-pricing disruption vs your view.']
+          : ['pill-good','Bonds, Asian FX, breakevens','Roughly consistent with your view ("more of the same").'];
+  const fis = p>=NEED ? ['pill-good','US debt','At ≥'+NEED+'% the US can grow out of its debt at current policy.']
+          : ['pill-bad','US debt','Below ~'+NEED+'%: needs fiscal restraint or ~150bp lower rates to stabilise.'];
+  document.getElementById('verdict').innerHTML=[ai,mac,fis].map(([c,h,t])=>`<div class="${c}"><div class="h">${h}</div>${t}</div>`).join('');
+}
+document.getElementById('prod').addEventListener('input',whatif); whatif();
+
+// ---- data tab ----
+const rows=Object.entries(C).map(([key,c])=>`<tr><td>${c.title}</td><td>${c.slide}</td><td><a href="${ytUrl(c.ts)}" target="_blank" rel="noopener">${c.ts}</a></td>
+  <td><span class="badge ${accClass(Array.isArray(c.accuracy)?'approx':c.accuracy)}">${Array.isArray(c.accuracy)?c.accuracy.join('; '):c.accuracy}</span></td>
+  <td><button data-k="${key}">CSV</button></td></tr>`).join('');
+document.querySelector('#dtable tbody').innerHTML=rows;
+document.getElementById('chap').innerHTML=D.meta.chapters.map(c=>`<li><a href="${ytUrl(c.t)}" target="_blank" rel="noopener">${c.t}</a> ${c.title}</li>`).join('');
+function toCSV(c){
+  if(c.points) return 'x,y\n'+c.points.map(p=>Array.isArray(p)?p.join(','):[p.x,p.y,p.label||''].join(',')).join('\n');
+  const head=c.years||c.labels;
+  if(c.series) return ['label',...Object.keys(c.series)].join(',')+'\n'+head.map((h,i)=>[JSON.stringify(String(h)),...Object.values(c.series).map(s=>s[i]??'')].join(',')).join('\n');
+  return 'label,value\n'+head.map((h,i)=>JSON.stringify(String(h))+','+c.values[i]).join('\n');
+}
+document.getElementById('dtable').addEventListener('click',async e=>{
+  const k=e.target.dataset&&e.target.dataset.k; if(!k) return;
+  const txt=toCSV(C[k]); const pre=document.getElementById('csv'); pre.style.display='block'; pre.textContent='# '+C[k].title+'\n'+txt;
+  try{ await navigator.clipboard.writeText(txt); e.target.textContent='Copied'; }catch(_){ e.target.textContent='Shown below'; }
+  setTimeout(()=>e.target.textContent='CSV',1800);
+});
+
+// ---- routing ----
+const tabs=['overview','ai','concentration','mercantilism','fiscal','pricing','data'];
+function route(){
+  const h=(location.hash||'').slice(1), t=tabs.includes(h)?h:'overview';
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===t));
+  document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+t));
+  render(); window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',render);
+route();
+})();
+</script>
+</body>
+</html>
